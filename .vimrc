@@ -1,62 +1,97 @@
-""""""""""""NERDTree CONFIG""""""""""""
-autocmd vimenter * NERDTree
-nmap <silent> <c-n> :NERDTreeToggle<CR>
-let NERDTreeMinimalUI = 1
-let g:NERDTreeWinSize = 30
-let NERDTreeHighlightCursorline = 1
-noremap <silent> <C-h> <C-w>h
-nnoremap <silent> <C-l> <C-w>l
-nnoremap <silent> <C-k> <C-w>k
-nnoremap <silent> <C-j> <C-w>j
 
-""""""""""""GENERAL CONFIG"""""""""""""
-syntax on
-
+set hidden
+set tabstop=4 softtabstop=4
+set colorcolumn=80
+set shiftwidth=4
+set expandtab
+set smartindent
 set number
+set nowrap
+set noswapfile
+set smartcase
+set incsearch
 set hlsearch
-set autoread
-set updatetime=100
-set colorcolumn=145
-highlight ColorColumn ctermbg=darkgray
-colorscheme torte
-autocmd BufNewFile,BufRead *.md set filetype=markdown
-"list tab as > and -"
-"set list
-"set listchars=tab:>-
-""highlight trailing whitespace"
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-autocmd BufWinLeave * call clearmatches()
 
-"""""""""""FOLD CONFIG"""""""""""""""
+" disable beep and flash
+set noerrorbells visualbell t_vb=
+autocmd GUIEnter * set visualbell t_vb=
+
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=50
+
+call plug#begin('~/.vim/plugged')
+Plug 'joshdick/onedark.vim'
+Plug 'itchyny/lightline.vim'
+Plug 'ycm-core/YouCompleteMe'
+Plug 'jremmen/vim-ripgrep'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'vim-utils/vim-man'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'preservim/nerdtree'
+Plug 'vim-airline/vim-airline'
+Plug 'scrooloose/syntastic'
+Plug 'majutsushi/tagbar'
+call plug#end()
+
+" color scheme
+syntax on
+colorscheme onedark 
+let g:lightline = { 'colorscheme': 'onedark' }
+
+let g:netrw_browse_split = 2
+let g:netrw_banner = 0
+let g:netrw_winsize = 25
+
+let g:ctrlp_use_caching = 0
+
+" code folding
 set foldmethod=indent
 set foldlevel=99
-nnoremap <space> za
+nnoremap <leader> za
 
-"""""""""""PEP 8 INDENTATION"""""""""""
-au BufNewFile,BufRead *.py
-    \ set tabstop=4 |
-    \ set softtabstop=4 |
-    \ set shiftwidth=4 |
-    "\ set textwidth=79 |
-    "    \ set expandtab |
-    "        \ set autoindent |
-    "            \ set fileformat=unix
-    "            "" Flag extra whitespace
-:highlight BadWhitespace ctermfg=16 ctermbg=9 guifg=#000000 guibg=#F8F8F0
-au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
+" nerdtree config
+autocmd vimenter * NERDTree
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+nnoremap <leader>n :NERDTreeToggle<CR>
 
-"""""""""""GIT-GUTTER CONFIG"""""""""""
-let g:gitgutter_diff_base = 'HEAD'
+let mapleader = " "
+" window navigation
+nnoremap <leader>h :wincmd h<CR>
+nnoremap <leader>j :wincmd j<CR>
+nnoremap <leader>k :wincmd k<CR>
+noremap <leader>l :wincmd l<CR>
 
-"""""""""""Exit Highlighter"""""""""""
-nnoremap <esc> :noh<return><esc>
+" search
+nnoremap <Leader>f :Rg<SPACE>
 
+" ycm
+nnoremap <silent> <leader>gd :YcmCompleter GoTo<CR>
+nnoremap <silent> <leader>gr :YcmCompleter GoToReferences<CR>
 
-"""""""""""IRGNORE TEMP FILE"""""""""""
-set noswapfile
-set nobackup
-set nowritebackup
+" syntastic config
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+nnoremap <leader>sc :SyntasticCheck<CR>
+nnoremap <leader>sd :SyntasticReset<CR>
+nnoremap <leader>n :lnext<CR>
+nnoremap <leader>p :lprev<CR>
+
+" escape highlight
+nnoremap <esc> :noh<CR><esc>
+
+" tag list
+nnoremap <leader>t :TagbarToggle<CR>
+
+fun! TrimWhitespace()
+    let l:save = winsaveview()
+    keeppatterns %s/\s\+$//e
+    call winrestview(l:save)
+endfun
+autocmd BufWritePre * :call TrimWhitespace()
+
