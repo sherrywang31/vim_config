@@ -1,7 +1,4 @@
 
-set hidden
-set tabstop=4 softtabstop=4
-set colorcolumn=80
 set shiftwidth=4
 set expandtab
 set smartindent
@@ -37,13 +34,14 @@ call plug#end()
 
 " color scheme
 syntax on
-colorscheme onedark 
+colorscheme onedark
 let g:lightline = { 'colorscheme': 'onedark' }
 
 let g:netrw_browse_split = 2
 let g:netrw_banner = 0
 let g:netrw_winsize = 25
 
+let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
 let g:ctrlp_use_caching = 0
 
 " code folding
@@ -94,4 +92,3 @@ fun! TrimWhitespace()
     call winrestview(l:save)
 endfun
 autocmd BufWritePre * :call TrimWhitespace()
-
