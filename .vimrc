@@ -8,6 +8,7 @@ set noswapfile
 set smartcase
 set incsearch
 set hlsearch
+set paste
 
 " disable beep and flash
 set noerrorbells visualbell t_vb=
@@ -18,6 +19,11 @@ autocmd GUIEnter * set visualbell t_vb=
 set updatetime=50
 
 call plug#begin('~/.vim/plugged')
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
 Plug 'joshdick/onedark.vim'
 Plug 'itchyny/lightline.vim'
 Plug 'ycm-core/YouCompleteMe'
