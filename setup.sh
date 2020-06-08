@@ -1,9 +1,10 @@
 cp .vimrc ~/
 
 #YCM
-apt install build-essential cmake python3-dev
+sudo apt install build-essential cmake python3-dev
+git clone https://github.com/ycm-core/YouCompleteMe.git ~/.vim/plugged/
 cd ~/.vim/plugged/YouCompleteMe
 python3 install.py
 
 #ctags
-apt-get install ctags
+sudo apt-get install ctags
