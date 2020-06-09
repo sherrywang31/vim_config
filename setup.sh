@@ -8,3 +8,6 @@ python3 install.py
 
 #ctags
 sudo apt-get install ctags
+
+#pip
+sudo apt-get install python3-pip
