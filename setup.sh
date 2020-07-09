@@ -11,3 +11,6 @@ sudo apt-get install ctags
 
 #pip
 sudo apt-get install python3-pip
+
+# skelebot
+sudo pip3 install skelebot
