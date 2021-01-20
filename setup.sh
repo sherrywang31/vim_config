@@ -1,4 +1,5 @@
 cp .vimrc ~/
+vim -c PluginInstall -c qall
 
 #YCM
 sudo apt install build-essential cmake python3-dev
