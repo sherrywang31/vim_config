@@ -2,7 +2,7 @@ cp .vimrc ~/
 vim -c PlugInstall -c qall
 
 #YCM
-sudo apt install build-essential cmake python3-dev
+sudo apt install build-essential cmake
 git clone https://github.com/ycm-core/YouCompleteMe.git ~/.vim/plugged/
 cd ~/.vim/plugged/YouCompleteMe
 python3 install.py
@@ -11,6 +11,7 @@ python3 install.py
 sudo apt-get install ctags
 
 #pip
+sudo apt-get update
 sudo apt-get install python3-pip
 
 # skelebot
