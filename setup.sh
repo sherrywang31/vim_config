@@ -26,17 +26,19 @@ echo "Neovim version:"
 nvim --version | head -n 1
 
 echo "Installing latest fzf..."
-if [ -d ~/.fzf ]; then
-    git -C ~/.fzf pull
-else
-    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-fi
+# Install latest fzf
+rm -rf ~/.fzf
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install --all
+
+# Ensure it wins over apt's version
 grep -qxF 'export PATH="$HOME/.fzf/bin:$PATH"' ~/.bashrc || \
       echo 'export PATH="$HOME/.fzf/bin:$PATH"' >> ~/.bashrc
 
 export PATH="$HOME/.fzf/bin:$PATH"
 hash -r
+# Remove old Ubuntu package if present
+sudo apt-get remove -y fzf || true
 
 echo "Creating config dirs..."
 mkdir -p ~/.config/nvim ~/.local/share/nvim
@@ -136,21 +138,24 @@ require("lazy").setup({
         width = 30,
         preserve_window_proportions = true,
       },
-      renderer = {
-        group_empty = true,
-      },
       update_focused_file = {
         enable = true,
         update_root = true,
       },
       sync_root_with_cwd = true,
-      filters = {
-        dotfiles = false,
-      },
-    },
-    keys = {
-      { "<leader>e", "<cmd>NvimTreeToggle<CR>" },
-      { "<leader>n", "<cmd>NvimTreeFindFile<CR>" },
+
+      on_attach = function(bufnr)
+        local api = require("nvim-tree.api")
+
+        api.config.mappings.default_on_attach(bufnr)
+
+        local opts = { buffer = bufnr, noremap = true, silent = true }
+
+        -- Keep NERDTree muscle memory
+        vim.keymap.set("n", "v", api.node.open.vertical, opts)
+        vim.keymap.set("n", "s", api.node.open.horizontal, opts)
+        vim.keymap.set("n", "t", api.node.open.tab, opts)
+      end,
     },
   },
 
@@ -196,20 +201,28 @@ require("lazy").setup({
   { "lewis6991/gitsigns.nvim", opts = {} },
 
   -- LSP
-  { "neovim/nvim-lspconfig" },
+  {
+    "neovim/nvim-lspconfig",
+  },
 
   {
     "williamboman/mason.nvim",
-      opts = {},
+    opts = {},
   },
 
   {
     "williamboman/mason-lspconfig.nvim",
-      dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
-        opts = {
-            ensure_installed = { "pyright" },
-                automatic_enable = true,
-                  },
+    dependencies = {
+      "williamboman/mason.nvim",
+      "neovim/nvim-lspconfig",
+    },
+    opts = {
+      ensure_installed = { "pyright" },
+    },
+    config = function(_, opts)
+      require("mason-lspconfig").setup(opts)
+      vim.lsp.enable("pyright")
+    end,
   },
 
   -- completion
