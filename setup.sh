@@ -7,8 +7,26 @@ sudo apt-get update
 sudo apt-get install -y \
   git curl unzip build-essential \
   tmux ripgrep fd-find \
-  nodejs npm python3 python3-pip \
+  python3 python3-pip \
   ca-certificates
+
+echo "Installing Node.js 22..."
+
+# Remove Ubuntu's old Node packages, including conflicting headers.
+sudo apt-get remove -y \
+  nodejs npm libnode-dev nodejs-doc || true
+
+# Recover cleanly if a previous package operation was interrupted.
+sudo dpkg --configure -a
+sudo apt-get --fix-broken install -y
+sudo apt-get clean
+
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+echo "Node version:"
+node --version
+npm --version
 
 echo "Installing latest stable Neovim..."
 
@@ -285,7 +303,9 @@ vim.keymap.set("n", "<leader>p", vim.diagnostic.goto_prev)
 vim.keymap.set("n", "<leader>z", "za")
 EOF
 
-echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.bashrc
+grep -qxF 'export PATH="/usr/local/bin:$PATH"' ~/.bashrc || \
+  echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.bashrc
+
 export PATH="/usr/local/bin:$PATH"
 hash -r
 
