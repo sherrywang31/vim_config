@@ -67,6 +67,40 @@ git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
 
 echo "Writing tmux config..."
 cat > ~/.tmux.conf <<'EOF'
+# Automatically renumber windows when one is closed
+set-option -g renumber-windows on
+
+# Set status bar right
+set -g status-right '%Y-%m-%d %H:%M #{tmux_mode_indicator}'
+
+### COLOR
+
+# default statusbar colors
+set -g mode-style bg=blue,fg=white,bold
+
+set -g status-style bg=black,fg=white,default
+
+# default window title colors
+set -g window-status-style fg=brightblue,bg=default
+
+# active window title colors
+set -g window-status-current-style fg=yellow,bright
+
+# pane border
+set -g pane-border-style fg=black
+set -g pane-active-border-style fg=green
+
+# message text
+set -g message-style bg=black,fg=brightred
+
+# pane number display
+set-option -g display-panes-active-colour blue #blue
+set-option -g display-panes-colour brightred #orange
+
+# clock
+set-window-option -g clock-mode-colour green #green
+
+
 set -g mouse on
 set -g history-limit 50000
 setw -g mode-keys vi
@@ -170,8 +204,8 @@ require("lazy").setup({
         local opts = { buffer = bufnr, noremap = true, silent = true }
 
         -- Keep NERDTree muscle memory
-        vim.keymap.set("n", "v", api.node.open.vertical, opts)
-        vim.keymap.set("n", "s", api.node.open.horizontal, opts)
+        vim.keymap.set("n", "v", api.node.open.horizontal, opts)
+        vim.keymap.set("n", "s", api.node.open.vertical, opts)
         vim.keymap.set("n", "t", api.node.open.tab, opts)
       end,
     },
